@@ -4,6 +4,7 @@ import { store, PATTERNS } from '../store.js';
 import { crestEl, fileToLogo, PATTERN_LABELS, teamTag } from '../crest.js';
 import { playerAvatar, teamKit } from '../avatar.js';
 import { faceEditor } from '../ui/faceEditor.js';
+import { randomPlayer } from '../randomPlayer.js';
 import { openSheet, confirmDialog } from '../ui/sheet.js';
 import { toast } from '../ui/toast.js';
 import { playerName } from '../ui/playerName.js';
@@ -228,6 +229,16 @@ export function openPlayerForm(teamId, playerId = null) {
       },
     }, crestEl(t, 16), t.name));
     const err = h('p', { class: 'error', role: 'alert' });
+    // Jugador al azar (solo al sumar uno nuevo): cara, nombre, apodo y un número libre del equipo.
+    const randomBtn = p ? null : h('button', {
+      type: 'button', class: 'ghost random-player',
+      onclick: () => {
+        const taken = store.get().players.filter((x) => x.teamId === team.id).map((x) => x.number).filter(Boolean);
+        const r = randomPlayer(taken);
+        name.value = r.name; nick.value = r.nickname; num.value = r.number;
+        editor.randomize();
+      },
+    }, '🎲 Jugador al azar');
     return h('form', {
       class: 'player-form',
       onsubmit: (e) => {
@@ -242,6 +253,7 @@ export function openPlayerForm(teamId, playerId = null) {
         }
       },
     },
+    randomBtn,
     holder,
     field('Nombre', name),
     h('div', { class: 'row' }, h('div', { class: 'grow' }, field('Apodo', nick)), field('Número', num)),

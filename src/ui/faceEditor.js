@@ -60,8 +60,8 @@ export function faceEditor(seed, initial, kit = null) {
     kit ? null : group('Camiseta', false,
       swRow('Color', AV_SHIRT, SHIRT_NAMES, 'shirt'), swRow('Color 2', AV_SHIRT, SHIRT_NAMES, 'shirt2'),
       optRow('Diseño', AV_JERSEY, 'jersey')),
-    h('button', { type: 'button', class: 'ghost small', onclick: () => { face = randomFace(); paint(); } }, '🎲 Aleatorio'));
+    h('button', { type: 'button', class: 'ghost small', onclick: () => { face = randomFace(); paint(); } }, '🎲 Cara al azar'));
 
   paint();
-  return { el, get: () => ({ ...face }) };
+  return { el, get: () => ({ ...face }), randomize: () => { face = randomFace(); paint(); } };
 }

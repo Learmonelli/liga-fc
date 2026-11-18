@@ -125,6 +125,7 @@ button.ko-card:hover:not(:disabled) { border-color: var(--gold); }
 .pod-team .crest { filter: none; }
 .player-sheet .player-head .pname { font-size: 1.1rem; }
 .player-form .face-row .face-pill { display: inline-flex; align-items: center; gap: 6px; }
+.player-form .random-player { width: 100%; margin-bottom: 8px; }
 
 /* Pixel: tipografías y bordes como Piel Morena */
 [data-theme="pixel"] .mr-score { font-family: var(--font-body); font-size: 28px; }

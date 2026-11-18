@@ -375,3 +375,28 @@ test('colores de la liga: los elige un admin, todos los ven salvo quien eligió 
   store.setLook({ palette: '' });
   setLeaguePalette('');
 });
+
+test('jugador al azar: completa nombre, apodo, número libre y cara', async () => {
+  const { randomPlayer } = await import('../src/randomPlayer.js');
+  // Con todos los números ocupados menos el 7, le toca el 7.
+  const taken = Array.from({ length: 99 }, (_, i) => String(i + 1)).filter((n) => n !== '7');
+  const r = randomPlayer(taken, () => 0.5);
+  assert.equal(r.number, '7');
+  assert.match(r.name, /^\S+ \S+$/);
+  assert.ok(r.nickname);
+  assert.equal(randomPlayer(Array.from({ length: 99 }, (_, i) => i + 1)).number, '', 'sin números libres queda vacío');
+
+  const team = store.get().teams[0];
+  openPlayerForm(team.id);
+  const form = sheet();
+  const before = form.querySelector('.face-preview').innerHTML;
+  btn(form, /Jugador al azar/).click();
+  assert.ok(form.querySelector('input[aria-label="Nombre"]').value.trim(), 'pone un nombre');
+  assert.ok(form.querySelector('input[aria-label="Apodo"]').value.trim(), 'pone un apodo');
+  const num = form.querySelector('input[aria-label="Número de camiseta"]').value;
+  const used = store.get().players.filter((p) => p.teamId === team.id).map((p) => String(p.number));
+  assert.ok(num && !used.includes(num), 'número libre en el equipo');
+  assert.equal(form.querySelector('.face-preview').children.length, 1);
+  void before;
+  closeSheets();
+});
