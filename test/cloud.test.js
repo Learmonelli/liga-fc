@@ -38,6 +38,22 @@ function fakeSupabase() {
       signOut: async () => { db.user = null; },
     },
     from: (table) => (table === 'fulbito_backups' ? backupsApi : leaguesApi),
+    rpc: async (name, args) => {
+      const row = db.rows.get(args?.p_league);
+      if (name === 'fulbito_my_role') {
+        if (!db.user || !row) return { data: null, error: null };
+        return { data: db.user.id === row.owner ? 'owner' : can(row) ? 'admin' : null, error: null };
+      }
+      if (name === 'fulbito_league_admins') {
+        if (!row || !can(row)) return { data: [], error: null };
+        return { data: [...(row.owner_email ? [{ email: row.owner_email, role: 'owner' }] : []), ...row.admins.map((e) => ({ email: e, role: 'admin' }))], error: null };
+      }
+      if (name === 'fulbito_my_leagues') {
+        if (!db.user) return { data: [], error: null };
+        return { data: [...db.rows.values()].filter((r) => can(r)).map((r) => ({ id: r.id, name: r.name, role: r.owner === db.user.id ? 'owner' : 'admin', mode: r.data?.mode ?? null })), error: null };
+      }
+      return { data: null, error: { code: 'PGRST202', message: 'Could not find the function' } };
+    },
   };
   // Copias: solo los admins de la liga ven y guardan (como las políticas de backups.sql).
   db.backups = [];
@@ -66,10 +82,14 @@ function fakeSupabase() {
       if (!last || JSON.stringify(last.data) !== JSON.stringify(r.data)) db.backups.push({ id: db.backups.length + 1, league_id: r.id, kind: 'auto', data: structuredClone(r.data), created_at: new Date().toISOString() });
     }
   };
+  // Como con privacy.sql: owner_email y admins no se pueden leer (ni filtrar) desde la app.
+  db.privateReads = 0;
+  const denied = { data: null, error: { code: '42501', message: 'permission denied for table fulbito_state' } };
+  const PRIVATE = /owner_email|admins/;
   const leaguesApi = {
-      select: (cols) => ({
+      select: (cols) => (PRIVATE.test(cols) ? { eq: async () => { db.privateReads++; return denied; }, contains: async () => { db.privateReads++; return denied; } } : {
         eq: async (col, v) => ({ data: [...db.rows.values()].filter((r) => r[col] === v).map((r) => pick(r, cols.replace(/\s/g, ''))), error: null }),
-        contains: async (col, arr) => ({ data: [...db.rows.values()].filter((r) => arr.every((x) => r[col].includes(x))).map((r) => pick(r, cols.replace(/\s/g, ''))), error: null }),
+        contains: async () => { db.privateReads++; return denied; },
       }),
       insert: (obj) => ({
         select: async (cols) => {
@@ -238,4 +258,23 @@ test('copias de seguridad: diarias del servidor, a mano, y solo para los admins 
   assert.deepEqual(await cloud.listBackups(), []);
   await assert.rejects(cloud.saveBackup({}), /Solo los administradores/);
   await assert.rejects(cloud.getBackup(1), /Solo los administradores/);
+});
+
+test('privacidad: la app de ligas nunca pide los emails; los admins ven la lista con la función', async () => {
+  const db = fakeSupabase();
+  db.user = ORGA;
+  const { cloud } = setup(db, 'main');
+  await cloud.connect(CFG, { leagueId: 'main' });
+  const id = await cloud.createLeague('Torneo Privado', { teams: [] }, () => 0.1);
+  cloud.disconnect();
+  const r = setup(db, id);
+  await r.cloud.connect(CFG, { leagueId: id });
+  assert.equal(r.cloud.canEdit(), true, 'el dueño se reconoce por la función');
+  await r.cloud.setAdmins(['ayuda@mail.com']);
+  assert.deepEqual(await r.cloud.listAdmins(), { ownerEmail: ORGA.email, admins: ['ayuda@mail.com'] });
+  db.user = HINCHA;
+  await r.cloud.refreshRole();
+  assert.equal(r.cloud.canEdit(), false);
+  assert.deepEqual(await r.cloud.listAdmins(), { ownerEmail: '', admins: [] }, 'quien no es admin no recibe emails');
+  assert.equal(db.privateReads, 0, 'ninguna consulta pidió owner_email ni admins');
 });

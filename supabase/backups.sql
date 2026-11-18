@@ -25,15 +25,11 @@ grant usage, select on sequence public.fulbito_backups_id_seq to authenticated;
 -- Solo los administradores de ESA liga ven y guardan sus copias.
 drop policy if exists fulbito_backups_select on public.fulbito_backups;
 create policy fulbito_backups_select on public.fulbito_backups
-  for select to authenticated using (exists (
-    select 1 from public.fulbito_state s
-    where s.id = league_id and public.fulbito_can_edit(s.id, s.owner, s.admins)));
+  for select to authenticated using (public.fulbito_league_admin(league_id));
 
 drop policy if exists fulbito_backups_insert on public.fulbito_backups;
 create policy fulbito_backups_insert on public.fulbito_backups
-  for insert to authenticated with check (kind = 'manual' and exists (
-    select 1 from public.fulbito_state s
-    where s.id = league_id and public.fulbito_can_edit(s.id, s.owner, s.admins)));
+  for insert to authenticated with check (kind = 'manual' and public.fulbito_league_admin(league_id));
 -- Nadie borra ni cambia copias desde la app (solo el recorte automático de abajo).
 
 -- Deja como mucho 30 copias por liga (las más nuevas).

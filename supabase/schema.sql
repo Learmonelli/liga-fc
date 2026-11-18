@@ -46,6 +46,18 @@ as $$
   );
 $$;
 
+-- ¿Quien hace el pedido es dueño o admin de esa liga? Ve las columnas privadas (security definer).
+create or replace function public.fulbito_league_admin(p_league text)
+returns boolean
+language sql
+stable
+security definer
+set search_path = public
+as $
+  select exists (select 1 from public.fulbito_state s
+                 where s.id = p_league and public.fulbito_can_edit(s.id, s.owner, s.admins));
+$;
+
 -- Al crear: el dueño es quien la crea. Al editar: el dueño y su email no cambian nunca; los emails
 -- de admins se guardan en minúscula, sin repetidos y como mucho 20.
 create or replace function public.fulbito_touch()
@@ -85,7 +97,9 @@ alter table public.fulbito_state enable row level security;
 
 -- Permisos de la API (en proyectos nuevos las tablas no quedan expuestas solas). Las políticas de
 -- abajo siguen mandando: leer cualquiera, escribir solo dueño y admins.
-grant select on public.fulbito_state to anon, authenticated;
+-- owner_email y admins NO se leen desde la app (ver privacy.sql): permiso de lectura por columna.
+revoke select on public.fulbito_state from anon, authenticated;
+grant select (id, name, data, owner, updated_at, updated_by, created_at) on public.fulbito_state to anon, authenticated;
 grant insert, update, delete on public.fulbito_state to authenticated;
 
 drop policy if exists fulbito_select on public.fulbito_state;
@@ -101,8 +115,8 @@ create policy fulbito_insert on public.fulbito_state
 drop policy if exists fulbito_update on public.fulbito_state;
 create policy fulbito_update on public.fulbito_state
   for update to authenticated
-  using (public.fulbito_can_edit(id, owner, admins))
-  with check (public.fulbito_can_edit(id, owner, admins));
+  using (public.fulbito_league_admin(id))
+  with check (public.fulbito_league_admin(id));
 
 -- Borrar la liga: solo su dueño.
 drop policy if exists fulbito_delete on public.fulbito_state;

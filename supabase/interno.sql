@@ -44,6 +44,7 @@ create or replace function public.fulbito_league_admin(p_league text)
 returns boolean
 language sql
 stable
+security definer -- ve owner/admins, que la app ya no puede leer (privacy.sql)
 set search_path = public
 as $$
   select exists (select 1 from public.fulbito_state s

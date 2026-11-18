@@ -85,7 +85,8 @@ begin
   ---------------------------------------------------------------- A invita a B como admin
   perform set_config('request.jwt.claims', json_build_object('sub', ua, 'email', 'a@test-iso.local', 'role', 'authenticated')::text, true);
   update public.fulbito_state set admins = array['B@Test-Iso.local'] where id = 'test-iso-a';
-  select coalesce(admins[1], '') into v from public.fulbito_state where id = 'test-iso-a';
+  -- (la columna admins ya no se lee desde la app: se pregunta con la función, ver privacy.sql)
+  select coalesce(min(email), '') into v from public.fulbito_league_admins('test-iso-a') where role = 'admin';
   if v = 'b@test-iso.local' then ok := ok + 1; log := log || E'\nok   A agrega a B como admin (email en minúscula)';
   else bad := bad + 1; log := log || E'\nFALLA no se guardó el admin: ' || v; end if;
 
