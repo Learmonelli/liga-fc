@@ -41,7 +41,7 @@ function teamsList(s, matches, rerender) {
         const st = tt[t.id];
         const n = s.players.filter((p) => p.teamId === t.id).length;
         return h('li', {}, h('button', { class: 'pcard tcard', onclick: () => openTeamSheet(t.id), 'aria-label': `${t.name}, ver ficha` },
-          crestEl(t, 44),
+          crestEl(t, 32),
           h('span', { class: 'pc-main' },
             h('strong', {}, t.name, titles[t.id] ? h('span', { class: 'titles' }, ` 🏆${titles[t.id]}`) : null),
             h('span', { class: 'pc-stats' }, st.pj ? `${st.pj} PJ · ${st.w}G ${st.d}E ${st.l}P · ${st.gf}:${st.gc}` : `${n} jugador${n === 1 ? '' : 'es'} · sin partidos`),
@@ -74,7 +74,7 @@ function playersRanking(s, matches) {
             rest.length ? h('ul', { class: 'card rank-list' }, rest.map((r) => h('li', {},
               h('span', { class: 'rpos' }, `${r.pos}°`),
               h('button', { class: 'linklike inline', onclick: () => openPlayerSheet(r.player.id), 'aria-label': `${r.player.name}, ${r.value}, ver ficha` },
-                playerAvatar(r.player, 36, 'bust', teamOf(r.player)), h('span', { class: 'pinfo' }, playerName(r.player),
+                playerAvatar(r.player, 30, 'bust', teamOf(r.player)), h('span', { class: 'pinfo' }, playerName(r.player),
                   teamOf(r.player) ? h('span', { class: 'counts' }, crestEl(teamOf(r.player), 14), ` ${teamOf(r.player).name}`) : null)),
               h('span', { class: 'rval' }, String(r.value))))) : null,
           ]);
@@ -115,7 +115,7 @@ function friendlyTeamsList(s) {
     const fs = s.friendlies.filter((f) => f.teamId === t.id && f.played);
     const goals = fs.reduce((n, f) => n + f.homeGoals + f.awayGoals, 0);
     return h('li', {}, h('button', { class: 'pcard tcard', onclick: () => openTeamSheet(t.id), 'aria-label': `${t.name}, ver ficha` },
-      crestEl(t, 44),
+      crestEl(t, 32),
       h('span', { class: 'pc-main' }, h('strong', {}, t.name),
         h('span', { class: 'pc-stats' }, `${fs.length} amistoso${fs.length === 1 ? '' : 's'} · ${goals} goles · ${(goals / fs.length).toFixed(1).replace('.', ',')} por partido`))));
   }));

@@ -70,7 +70,7 @@ export function openTeamSheet(teamId) {
           class: 'prow linklike inline', onclick: () => { close(); openPlayerSheet(p.id); },
           'aria-label': `${p.name}, ver ficha`,
         },
-        playerAvatar(p, 44, 'body', team), h('span', { class: 'pinfo' }, playerName(p),
+        playerAvatar(p, 34, 'body', team), h('span', { class: 'pinfo' }, playerName(p),
           h('span', { class: 'counts' }, `PJ ${pt[p.id].pj} · ⚽ ${pt[p.id].goals} · 🤝 ${pt[p.id].assists} · 👑 ${pt[p.id].mvp}`))))))
         : h('p', { class: 'muted' }, 'Todavía no tiene jugadores.'),
       store.isLocked() ? null : h('div', { class: 'row wrap' },

@@ -157,7 +157,7 @@ export function openFriendlySheet(id, { shuffle = false } = {}) {
           h('h3', { class: 'list-heading grow' }, `Armar equipos · ${nA} vs ${nB}`),
           h('button', { type: 'button', class: 'ghost small', onclick: () => { draw(); paintAll(); } }, '🎲 Sortear')),
         h('ul', { class: 'plist' }, ps.map((p) => h('li', { class: 'prow' },
-          playerAvatar(p, 36, 'bust', teamOf(p)),
+          playerAvatar(p, 30, 'bust', teamOf(p)),
           h('span', { class: 'pinfo' }, playerName(p), guests.has(p.id) ? h('span', { class: 'pill guest-pill' }, `invitado · ${teamOf(p)?.name ?? ''}`) : null),
           sideSeg(p)))),
         guestSearch, guestResults);
@@ -192,7 +192,7 @@ export function openFriendlySheet(id, { shuffle = false } = {}) {
             const mvp = toggle(`${n} figura del partido`, '👑', () => draft.mvp === p.id, (v) => { draft.mvp = v ? p.id : null; mvpBtns.forEach((x) => x.paint()); }, 'mvp');
             mvpBtns.push(mvp);
             return h('li', { class: 'mrow' },
-              h('div', { class: 'mrow-head' }, playerAvatar(p, 36, 'bust', teamOf(p)), playerName(p)),
+              h('div', { class: 'mrow-head' }, playerAvatar(p, 30, 'bust', teamOf(p)), playerName(p)),
               h('div', { class: 'mrow-acts' },
                 h('span', { class: 'mini-lbl', 'aria-hidden': 'true' }, '⚽'),
                 stepper({ label: `goles de ${n}`, max: 20, get: () => r.goal, set: (v) => { r.goal = v; paintNote(); } }).el,

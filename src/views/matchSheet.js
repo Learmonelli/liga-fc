@@ -114,7 +114,7 @@ export function openMatchSheet(tournamentId, matchId) {
       mvpButtons.push(mvpBtn);
       return h('li', { class: 'mrow' },
         h('div', { class: 'mrow-head' },
-          playerAvatar(p, 40, 'bust', team), // con la camiseta del equipo de ESE partido
+          playerAvatar(p, 32, 'bust', team), // con la camiseta del equipo de ESE partido
           h('span', { class: 'pinfo' }, playerName(p),
             p.teamId !== team.id ? h('span', { class: 'pill guest-pill' }, `ahora en ${teamById(s, p.teamId)?.name ?? 'otro equipo'}`) : null),
           h('span', { class: 'grow' }), playedBtn.el),
