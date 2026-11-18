@@ -110,8 +110,12 @@ export function createCloud({ createClient = realCreateClient, timers = globalTh
       if (!c.ok) throw new Error(c.error);
       onRemote = handler || onRemote;
       setStatus('connecting');
+      // La sesión se guarda con una clave por proyecto: al cambiar de proyecto de Supabase, la sesión
+      // del anterior no sirve (la base rechaza ese token y no deja ni mirar). La clave vieja se borra.
+      try { globalThis.localStorage?.removeItem('fulbito-auth'); } catch { /* sin almacenamiento */ }
+      const storageKey = `fulbito-auth-${new URL(c.url).hostname.split('.')[0]}`;
       client = createClient(c.url, c.key, {
-        auth: { persistSession: true, autoRefreshToken: true, storageKey: 'fulbito-auth', detectSessionInUrl: true, flowType: 'implicit' },
+        auth: { persistSession: true, autoRefreshToken: true, storageKey, detectSessionInUrl: true, flowType: 'implicit' },
       });
       try {
         if (client.auth) {
@@ -119,7 +123,13 @@ export function createCloud({ createClient = realCreateClient, timers = globalTh
           setUser(data?.session?.user);
           client.auth.onAuthStateChange((_e, session) => setUser(session?.user));
         }
-        const { data, error } = await client.from('fulbito_state').select(`data, ${META}`).eq('id', leagueId);
+        let { data, error } = await client.from('fulbito_state').select(`data, ${META}`).eq('id', leagueId);
+        // Sesión vencida o de otro proyecto: se descarta y se sigue sin login (se puede mirar igual).
+        if (error && /JWT|PGRST30/i.test(`${error.code} ${error.message}`) && client.auth) {
+          await client.auth.signOut({ scope: 'local' }).catch(() => {});
+          setUser(null);
+          ({ data, error } = await client.from('fulbito_state').select(`data, ${META}`).eq('id', leagueId));
+        }
         if (error) throw error;
         const row = Array.isArray(data) ? data[0] : data;
         setLeague(row, leagueId);
