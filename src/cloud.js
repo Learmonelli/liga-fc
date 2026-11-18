@@ -10,8 +10,9 @@ export const ADMIN_EMAIL = 'leandroarmonelli@gmail.com'; // superadmin de la lig
 // (tabla propia: fulbito_state). Si se deja vacío, la app funciona solo en el navegador.
 // La clave es la PUBLICABLE (va en el navegador de todos); la seguridad la ponen las políticas RLS.
 export const DEFAULT_CONFIG = {
-  url: 'https://sylhlksbxnjwswgjohbp.supabase.co',
-  key: 'sb_publishable_BbY4PgfsKHP7K8J4Zz7UIA_Gjbm8VNw',
+  // Proyecto propio de Fulbito (el que antes usaba la v1 de Piel Morena); Piel Morena v2 usa otro.
+  url: 'https://gzrmlghresdarqeaonir.supabase.co',
+  key: 'sb_publishable_-2mCf7RHOPVwNwzWbx7r1Q_80PJz3OL',
 };
 
 export const isAdminUser = (user) => !!user && (
