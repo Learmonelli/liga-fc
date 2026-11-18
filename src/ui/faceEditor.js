@@ -19,9 +19,8 @@ export function faceEditor(seed, initial, kit = null) {
   const controls = [];
 
   const paint = () => {
-    preview.replaceChildren(
-      avatarSVGEl(seed, 96, face, 'body', 'Vista previa del jugador', kit),
-      avatarSVGEl(seed, 64, face, 'bust', 'Vista previa del carnet', kit));
+    // Una sola vista previa (el cuerpo entero): con dos, el editor ocupaba más alto sin sumar nada.
+    preview.replaceChildren(avatarSVGEl(seed, 96, face, 'body', 'Vista previa del jugador', kit));
     for (const c of controls) {
       const on = face[c.key] === c.val;
       c.el.classList.toggle('on', on);

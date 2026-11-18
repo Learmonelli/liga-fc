@@ -168,6 +168,7 @@ test('versión moderna: escudos y caras vectoriales, sin pixel art', () => {
     // El editor de caras dibuja la vista previa con el mismo estilo.
     openPlayerForm(store.get().teams[0].id);
     assert.ok(sheet().querySelector('.face-preview .vec-avatar'));
+    assert.equal(sheet().querySelector('.face-preview').children.length, 1, 'una sola vista previa');
     closeSheets();
   } finally {
     document.documentElement.dataset.theme = 'pixel';
