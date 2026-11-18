@@ -166,10 +166,10 @@ function playoffsCard(s, tour) {
 export function noTournaments(s) {
   // Quien solo mira (no es el admin): un aviso, sin botones que no puede usar.
   if (store.isLocked()) {
-    return emptyCard('Bienvenido a Fulbito FC', 'Todavía no hay campeonatos cargados. Cuando el organizador los cargue, los vas a ver acá.');
+    return emptyCard('Bienvenido a Liga FC', 'Todavía no hay campeonatos cargados. Cuando el organizador los cargue, los vas a ver acá.');
   }
   if (!s.teams.length) {
-    return emptyCard('Bienvenido a Fulbito FC', 'Creá tus equipos, armá un campeonato y llevá la tabla, el cuadro y las estadísticas.',
+    return emptyCard('Bienvenido a Liga FC', 'Creá tus equipos, armá un campeonato y llevá la tabla, el cuadro y las estadísticas.',
       h('a', { class: 'btn', href: '#/equipos' }, '👥 Crear equipos'),
       h('button', { class: 'ghost', onclick: () => { store.loadDemo(); toast('Datos de ejemplo cargados.'); } }, '🧪 Ver con datos de ejemplo'));
   }

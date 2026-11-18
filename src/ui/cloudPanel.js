@@ -14,7 +14,7 @@ const STATUS = {
 
 async function share(url, name) {
   try {
-    if (navigator.share) { await navigator.share({ title: name, text: `${name} en Fulbito FC`, url }); return; }
+    if (navigator.share) { await navigator.share({ title: name, text: `${name} en Liga FC`, url }); return; }
   } catch { /* cancelado: se copia */ }
   try { await navigator.clipboard.writeText(url); toast('🔗 Link copiado. Pasalo por WhatsApp.'); } catch { toast(url, { ms: 12000 }); }
 }
@@ -23,10 +23,10 @@ function shareBox(sync) {
   const lg = sync.cloud.league();
   const url = leagueLink(sync.leagueId);
   return h('div', { class: 'card share-box' },
-    h('p', {}, h('strong', {}, lg?.name || 'Fulbito FC')),
+    h('p', {}, h('strong', {}, lg?.name || 'Liga FC')),
     h('p', { class: 'muted small-note' }, 'Con este link cualquiera mira la liga en vivo (tabla, cuadro, estadísticas). Solo los administradores cargan.'),
     h('input', { type: 'text', readonly: true, value: url, 'aria-label': 'Link de la liga', onfocus: (e) => e.target.select() }),
-    h('button', { onclick: () => share(url, lg?.name || 'Fulbito FC') }, '🔗 Compartir link'));
+    h('button', { onclick: () => share(url, lg?.name || 'Liga FC') }, '🔗 Compartir link'));
 }
 
 // Lista de administradores: el dueño (fijo) y los emails que agregaron. Los admins pueden sumar y sacar.

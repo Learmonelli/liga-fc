@@ -7,7 +7,7 @@ import { toast } from '../ui/toast.js';
 // [id, título, pestaña relacionada (o null), pasos/párrafos]
 export const TOPICS = [
   ['inicio', '🚀 Primeros pasos', null, [
-    'Fulbito FC lleva tus campeonatos entre amigos: tablas, cuadros, goleadores y campeones.',
+    'Liga FC lleva tus campeonatos entre amigos: tablas, cuadros, goleadores y campeones.',
     '1. En 👥 Equipos creá los equipos y sumales jugadores.',
     '2. En 📋 Fixture tocá "＋ Nuevo" para armar un campeonato.',
     '3. Tocá cada partido para cargar el resultado. La tabla, el cuadro y las estadísticas se actualizan solos.',

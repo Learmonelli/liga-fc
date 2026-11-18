@@ -149,7 +149,7 @@ test('sin datos: bienvenida con datos de ejemplo', () => {
   const json = store.exportJson();
   store.clearAll();
   renderFixture(root);
-  assert.match(root.textContent, /Bienvenido a Fulbito FC/);
+  assert.match(root.textContent, /Bienvenido a Liga FC/);
   renderChampions(root);
   assert.match(root.textContent, /Sin campeones todavía/);
   store.importJson(json);

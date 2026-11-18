@@ -63,8 +63,8 @@ export function createCloud({ createClient = realCreateClient, timers = globalTh
   const setUser = (u) => { user = u ?? null; authFns.forEach((fn) => fn(user)); };
   const setLeague = (row, id) => {
     league = row
-      ? { id: row.id, name: row.name || 'Fulbito FC', owner: row.owner ?? null, ownerEmail: row.owner_email ?? '', admins: row.admins ?? [], exists: true }
-      : { id, name: 'Fulbito FC', owner: null, ownerEmail: '', admins: [], exists: false };
+      ? { id: row.id, name: row.name || 'Liga FC', owner: row.owner ?? null, ownerEmail: row.owner_email ?? '', admins: row.admins ?? [], exists: true }
+      : { id, name: 'Liga FC', owner: null, ownerEmail: '', admins: [], exists: false };
     leagueFns.forEach((fn) => fn(league));
   };
 
@@ -193,7 +193,7 @@ export function createCloud({ createClient = realCreateClient, timers = globalTh
         email ? client.from('fulbito_state').select('id, name, owner').contains('admins', [email]) : { data: [] },
       ]);
       const all = [...(own.data || []), ...(adm.data || [])];
-      if (isAdminUser(user) && !all.some((l) => l.id === MAIN)) all.unshift({ id: MAIN, name: 'Fulbito FC (original)', owner: null });
+      if (isAdminUser(user) && !all.some((l) => l.id === MAIN)) all.unshift({ id: MAIN, name: 'Liga FC (original)', owner: null });
       const seen = new Set();
       return all.filter((l) => !seen.has(l.id) && seen.add(l.id))
         .map((l) => ({ id: l.id, name: l.name, role: l.owner === user.id ? 'dueño' : 'admin' }));

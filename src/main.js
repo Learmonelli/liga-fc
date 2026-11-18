@@ -63,13 +63,13 @@ try { localStorage.setItem(LAST, leagueIdFromUrl()); } catch { /* sin almacenami
 // ---- Nube (Supabase) ----
 const sync = makeCloudSync();
 sync.cloud.onStatus((st, d) => { if (st === 'error' && d) toast(`☁️ ${d}`, { ms: 7000 }); });
-// Nombre de la liga bajo "Fulbito FC" (solo en las ligas nuevas; la original queda como estaba).
+// Nombre de la liga bajo "Liga FC" (solo en las ligas nuevas; la original queda como estaba).
 const leagueName = h('p', { class: 'brand-league', hidden: true });
 sync.cloud.onLeague((lg) => {
   const show = sync.leagueId !== MAIN && lg?.exists;
   leagueName.hidden = !show;
   leagueName.textContent = show ? lg.name : '';
-  if (show) document.title = `${lg.name} · Fulbito FC`;
+  if (show) document.title = `${lg.name} · Liga FC`;
 });
 
 function downloadCopy() {
@@ -92,7 +92,7 @@ function openData() {
         if (f.size > 5 * 1024 * 1024) { toast('El archivo es demasiado grande.'); return; }
         const ok = await confirmDialog('Esto reemplaza todos los datos actuales. ¿Seguir?', { okLabel: 'Reemplazar', danger: true });
         if (!ok) return;
-        if (store.importJson(await f.text())) { toast('Copia importada.'); close(); } else toast('El archivo no es una copia válida de Fulbito FC.');
+        if (store.importJson(await f.text())) { toast('Copia importada.'); close(); } else toast('El archivo no es una copia válida de Liga FC.');
       },
     });
     const ro = store.isLocked(); // solo lectura: se puede descargar una copia, nada más
@@ -126,7 +126,7 @@ function paint() {
   });
   tab.render(main);
   const lg = sync.cloud.league();
-  document.title = `${tab.title} · ${sync.leagueId !== MAIN && lg?.exists ? lg.name : 'Fulbito FC'}`;
+  document.title = `${tab.title} · ${sync.leagueId !== MAIN && lg?.exists ? lg.name : 'Liga FC'}`;
   window.scrollTo(0, y);
   if (key !== lastKey && lastKey !== null) main.focus({ preventScroll: true }); // anuncia el cambio de pantalla
   lastKey = key;
@@ -182,9 +182,9 @@ onTheme(() => {
 document.body.prepend(pitchBackground());
 app.append(
   h('header', { class: 'app-header' },
-    h('a', { class: 'brand', href: '#/fixture', 'aria-label': 'Fulbito FC, inicio' },
+    h('a', { class: 'brand', href: '#/fixture', 'aria-label': 'Liga FC, inicio' },
       crestSlot,
-      h('div', {}, h('p', { class: 'brand-name' }, 'Fulbito FC'), leagueName)),
+      h('div', {}, h('p', { class: 'brand-name' }, 'Liga FC'), leagueName)),
     h('div', { class: 'header-tools' },
       modeBtn,
       h('button', { class: 'ghost small icon-btn', 'aria-label': 'Ayuda: cómo se usa', title: 'Ayuda', onclick: () => openHelp(route().id) }, '❓'),
